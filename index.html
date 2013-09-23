@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+	<style>
+	body { }
+	#africa {  -webkit-mask-image: url('mask.png'); position:relative; overflow: hidden; padding: 0; margin: 0; width: 935px; height: 986px; }
+	#border { position: absolute; z-index: 1;  }
+	#coins { position: relative; top: -1000px; z-index: 0; }
+	#number {
+		border-radius: 60px;
+		width: 700px;
+		height: 400px;
+		color: #fff;
+		opacity: 0.8;
+		background-color: #000;
+		padding: 60px;
+		font-size: 100px;
+		text-align: center;
+		height: 120px;
+		line-height: 120px;
+		text-align: center;
+		font-family: Avenir Next;
+		font-weight: bold;
+	}
+	</style>
+	<script>
+	const KEY_UP = 38;
+	const KEY_DOWN = 40;
+	const KEY_D = 68;
+	const KEY_U = 85;
+
+	var money = 0;
+	var interval = null;
+
+	function moveCoins(dir, amount) {
+		var $target = $("#coins");
+		var existingTop = parseInt($target.css("top"));
+		if (dir === "+" && amount > -existingTop) {
+			amount = -existingTop;
+		}
+		var start = interval !== null;
+		stopTicker();
+		$("#coins").animate({
+			easing: "linear",
+			top: (dir + "=" + amount)
+	  	}, 200, function() {
+	  		if (start) {
+	  			startTicker();
+	  		}
+	  	});
+	  	return dir == "+" ? existingTop + amount : existingTop - amount;
+	}
+
+	function setGraphicsFromMoney() {
+		// 0 -> -1050
+		// 100 000 -> -1600
+		var top = -0.006 * money - 1050;
+		if (top > 0) {
+			top = 0;
+		}
+		$("#coins").css("top", top);
+		setMoney();
+	}
+
+	function setMoneyFromGraphics() {
+		var top = parseInt($("#coins").css("top"));
+		setMoneyFromTop(top);
+	}
+
+	function setMoneyFromTop(top) {
+		money = parseInt(-166.66 * top - 175000);
+		setMoney();
+	}
+
+	function setMoney() {
+		var strMoney = money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+		$("#number").html(strMoney + " kr");
+	}
+
+	function startTicker() {
+		clearInterval(interval);
+		interval = setInterval(function() {
+			money += parseInt(5000 * Math.random());
+			setGraphicsFromMoney();
+		}, 1000);
+	}
+
+	function stopTicker() {
+		clearInterval(interval);
+		interval = null;
+	}
+
+	$(function() {
+		setGraphicsFromMoney();
+		startTicker();
+		$("body").keydown(function(evt) {
+			console.log(arguments);
+			var amount = evt.shiftKey ? 600 : 50;
+			if(evt.keyCode === KEY_UP) {
+				var newTop = moveCoins("-", amount);
+			  	setMoneyFromTop(newTop);
+			}
+			else if (evt.keyCode == KEY_DOWN) {
+				var newTop = moveCoins("+", amount);
+			  	setMoneyFromTop(newTop);
+			}
+			else if (evt.keyCode == KEY_D) {
+				$("#coins").animate({top: 0, easing: "linear"}, 1000);
+				setMoneyFromTop(0);
+			  	stopTicker();
+			}
+			else if (evt.keyCode == KEY_U) {
+			  	startTicker();
+			}
+		})
+	});
+	</script>
+</head>
+<body>
+
+	<div id="africa">
+		<img src="border.png" id="border" />
+		<img src="coinsolyx.png" id="coins" />
+	</div>
+
+	<div id="number">
+		100 000 kr
+	</div>
+
+</body>
+</html>
