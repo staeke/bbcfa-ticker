@@ -2,18 +2,26 @@
 <html>
 <head>
 	<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<style>
-	body { }
-	#africa {  -webkit-mask-image: url('mask.png'); position:relative; overflow: hidden; padding: 0; margin: 0; width: 935px; height: 986px; }
+	body { 		background-color: #0f0 }
+	#africa { position: absolute; top: 200px; left: 900px;} 
+	#masked {  -webkit-mask-image: url('mask.png'); position:relative; overflow: hidden; padding: 0; margin: 0; width: 935px; height: 986px; }
 	#border { position: absolute; z-index: 1;  }
-	#coins { position: relative; top: -1000px; z-index: 0; }
+	#madagascar { position: absolute; z-index: 2; left: 0; top: -1500px;  }
+	#coins { position: relative; top: -1000px; z-index: 0; background-color: #000; }
 	#number {
+
+		position: absolute;
+		top: 600px;
+		left: 10px;
+
 		border-radius: 60px;
 		width: 700px;
 		height: 400px;
-		color: #fff;
-		opacity: 0.8;
-		background-color: #000;
+		color: #000;
+		/*opacity: 0.8;*/
+		border: 5px solid black;
 		padding: 60px;
 		font-size: 100px;
 		text-align: center;
@@ -22,6 +30,9 @@
 		text-align: center;
 		font-family: Avenir Next;
 		font-weight: bold;
+		
+		background: linear-gradient(to bottom, #fff 0%,#555 100%);
+
 	}
 	</style>
 	<script>
@@ -29,6 +40,7 @@
 	const KEY_DOWN = 40;
 	const KEY_D = 68;
 	const KEY_U = 85;
+	const KEY_M = 77;
 
 	var money = 0;
 	var interval = null;
@@ -93,7 +105,6 @@
 
 	$(function() {
 		setGraphicsFromMoney();
-		startTicker();
 		$("body").keydown(function(evt) {
 			console.log(arguments);
 			var amount = evt.shiftKey ? 600 : 50;
@@ -113,6 +124,9 @@
 			else if (evt.keyCode == KEY_U) {
 			  	startTicker();
 			}
+			else if (evt.keyCode == KEY_M) {
+				$("#madagascar").animate({ top: 0 }, 900, 'easeOutBounce' );
+			}
 		})
 	});
 	</script>
@@ -122,14 +136,17 @@
 	<p>
 		Instructions:<br/>
 		D: Move down and stop<br/>
-		U: Start mov up again<br/>
+		U: Start move up again<br/>
 		Arrow up/down: move up down step<br/>
 		Shift + Arrow up/down: move up or down large amount
 	</p>
 
 	<div id="africa">
+		<img src="madagascar.png" id="madagascar" />
 		<img src="border.png" id="border" />
-		<img src="coinsolyx.png" id="coins" />
+		<div id="masked">
+			<img src="coinsolyx.png" id="coins" />
+		</div>
 	</div>
 
 	<div id="number">
